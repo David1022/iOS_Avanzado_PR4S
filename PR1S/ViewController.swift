@@ -112,10 +112,15 @@ class ViewController: UITableViewController {
         let item: CItemData = self.m_provider!.GetItemAt(position: indexPath.row)
        
         
-        var vc: ViewControllerBasic
-        vc = ViewControllerBasic(nibName: "ViewControllerBasic", bundle: nil)
-        vc.m_item = item
+        var vc: UIViewController
         
+        if (item.m_type == 6) {
+            vc = ViewControllerComplex()
+            (vc as! ViewControllerComplex).m_item = item
+        } else {
+            vc = ViewControllerBasic(nibName: "ViewControllerBasic", bundle: nil)
+            (vc as! ViewControllerBasic).m_item = item
+        }
         
         let p: UINavigationController = (self.parent as? UINavigationController)!
         p.pushViewController(vc, animated: true)
