@@ -30,8 +30,10 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
 
         // Do any additional setup after loading the view.
         // BEGIN-CODE-UOC-2
-        
+        self.m_map = MKMapView()
+        self.m_map?.delegate = self
         initViews()
+        AddMarkers()
         
         // END-CODE-UOC-2
         
@@ -40,8 +42,11 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         
         // BEGIN-CODE-UOC-5
         
-        
-        
+        self.m_locationManager = CLLocationManager()
+        self.m_locationManager?.delegate = self
+        self.m_locationManager?.allowsBackgroundLocationUpdates = true
+        self.m_locationManager?.distanceFilter = 50
+
         // END-CODE-UOC-5
         
         
@@ -52,7 +57,6 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     }
     
     func initViews() {
-        let mapView = UIView()
         let videoView = UIImageView()
         let controlsView = UIView()
         let playView = UIButton(type: .custom)
@@ -66,22 +70,23 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         let pauseImage = UIImage(named: "pause.png")
         pauseView.setImage(pauseImage, for: .normal)
 
-        self.view.addSubview(mapView)
+        guard let map = m_map else {return}
+        self.view.addSubview(map)
         self.view.addSubview(videoView)
         self.view.addSubview(controlsView)
         controlsView.addSubview(playView)
         controlsView.addSubview(pauseView)
 
-        mapView.translatesAutoresizingMaskIntoConstraints = false
+        map.translatesAutoresizingMaskIntoConstraints = false
         videoView.translatesAutoresizingMaskIntoConstraints = false
         controlsView.translatesAutoresizingMaskIntoConstraints = false
         playView.translatesAutoresizingMaskIntoConstraints = false
         pauseView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            mapView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
-            mapView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            mapView.bottomAnchor.constraint(equalTo: self.view.centerYAnchor),
+            map.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+            map.topAnchor.constraint(equalTo: self.view.topAnchor),
+            map.bottomAnchor.constraint(equalTo: self.view.centerYAnchor),
             
             controlsView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
             controlsView.heightAnchor.constraint(equalToConstant: 80),
@@ -104,10 +109,18 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         pauseView.addTarget(self, action: #selector(self.Pause(sender:)), for: .touchUpInside)
     }
     
-    @objc func playTapped() {
-        print("Play")
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+        
+        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        
+        let location = userLocation.coordinate
+        
+        let region = MKCoordinateRegion(center: location ,span: span)
+        
+        self.m_map?.setRegion(region,animated: true)
+        
     }
-    
+
     // BEGIN-CODE-UOC-8
     @objc func Play(sender:UIButton)
     {
@@ -126,8 +139,26 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     // BEGIN-CODE-UOC-3
     
-    
-    
+        guard let data = m_item?.m_data.data(using: .utf8) else { return }
+        do {
+            let markersList = try JSONSerialization.jsonObject(with: data as Data, options: .mutableContainers) as! NSMutableArray
+                        
+            for marker in markersList {
+                guard let dataMarker = marker as? NSMutableDictionary else {return}
+                let  annotation:ComplexMKPointAnnotation = ComplexMKPointAnnotation(coordinate: CLLocationCoordinate2D(latitude: dataMarker["lat"] as? Double ?? 0, longitude: dataMarker["lon"] as? Double ?? 0), title: dataMarker["title"] as? String ?? "",
+                    subtitle: dataMarker["movie"] as? String ?? "",
+                    movie: dataMarker["movie"] as? String ?? "")
+                
+                self.m_map?.addAnnotation(annotation)
+            }
+        } catch let error as NSError {
+            print(error)
+        }
+
+//        let  annotation:ComplexMKPointAnnotation = ComplexMKPointAnnotation(coordinate: CLLocationCoordinate2D(latitude: 41.4196222,longitude: 2.1844287),title: "Custom title text",subtitle: "Custom subtitle text",movie: "0001")
+        
+//        self.m_map?.addAnnotation(annotation)
+
     // END-CODE-UOC-3
     
     }

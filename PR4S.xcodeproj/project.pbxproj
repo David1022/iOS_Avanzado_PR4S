@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		311E6F9823A6B2D300025D71 /* ComplexMKPointAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311E6F9723A6B2D300025D71 /* ComplexMKPointAnnotation.swift */; };
 		B42BD9B01DFF28680037AE2C /* img in Resources */ = {isa = PBXBuildFile; fileRef = B42BD9AF1DFF28680037AE2C /* img */; };
 		B42BD9B31DFF2A460037AE2C /* ViewControllerComplex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BD9B11DFF2A460037AE2C /* ViewControllerComplex.swift */; };
 		B42BD9B41DFF2A460037AE2C /* ViewControllerComplex.xib in Resources */ = {isa = PBXBuildFile; fileRef = B42BD9B21DFF2A460037AE2C /* ViewControllerComplex.xib */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		311E6F9723A6B2D300025D71 /* ComplexMKPointAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplexMKPointAnnotation.swift; sourceTree = "<group>"; };
 		B42BD9AF1DFF28680037AE2C /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
 		B42BD9B11DFF2A460037AE2C /* ViewControllerComplex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewControllerComplex.swift; sourceTree = "<group>"; };
 		B42BD9B21DFF2A460037AE2C /* ViewControllerComplex.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewControllerComplex.xib; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				B4AE71521D96EADC005F4C75 /* ViewControllerBasic.xib */,
 				B42BD9B11DFF2A460037AE2C /* ViewControllerComplex.swift */,
 				B42BD9B21DFF2A460037AE2C /* ViewControllerComplex.xib */,
+				311E6F9723A6B2D300025D71 /* ComplexMKPointAnnotation.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -211,6 +214,7 @@
 				B4AE714C1D966CC3005F4C75 /* CItemProvider.swift in Sources */,
 				B4AE71531D96EADC005F4C75 /* ViewControllerBasic.swift in Sources */,
 				B4AE71501D966E1B005F4C75 /* CItemData.swift in Sources */,
+				311E6F9823A6B2D300025D71 /* ComplexMKPointAnnotation.swift in Sources */,
 				B4AE711B1D966638005F4C75 /* AppDelegate.swift in Sources */,
 				B42BD9B31DFF2A460037AE2C /* ViewControllerComplex.swift in Sources */,
 			);
