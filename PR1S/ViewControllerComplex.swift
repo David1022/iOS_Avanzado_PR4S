@@ -31,6 +31,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         // Do any additional setup after loading the view.
         // BEGIN-CODE-UOC-2
         
+        initViews()
         
         // END-CODE-UOC-2
         
@@ -50,17 +51,73 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         
     }
     
+    func initViews() {
+        let mapView = UIView()
+        let videoView = UIImageView()
+        let controlsView = UIView()
+        let playView = UIButton(type: .custom)
+        let pauseView = UIButton(type: .custom)
+
+        self.view.backgroundColor = .black
+
+        videoView.image = #imageLiteral(resourceName: "tv")
+        let playImage = UIImage(named: "play.png")
+        playView.setImage(playImage, for: .normal)
+        let pauseImage = UIImage(named: "pause.png")
+        pauseView.setImage(pauseImage, for: .normal)
+
+        self.view.addSubview(mapView)
+        self.view.addSubview(videoView)
+        self.view.addSubview(controlsView)
+        controlsView.addSubview(playView)
+        controlsView.addSubview(pauseView)
+
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        videoView.translatesAutoresizingMaskIntoConstraints = false
+        controlsView.translatesAutoresizingMaskIntoConstraints = false
+        playView.translatesAutoresizingMaskIntoConstraints = false
+        pauseView.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            mapView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+            mapView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            mapView.bottomAnchor.constraint(equalTo: self.view.centerYAnchor),
+            
+            controlsView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+            controlsView.heightAnchor.constraint(equalToConstant: 80),
+            controlsView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            
+            videoView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+            videoView.topAnchor.constraint(equalTo: self.view.centerYAnchor),
+            videoView.bottomAnchor.constraint(equalTo: controlsView.topAnchor),
+            
+            playView.heightAnchor.constraint(equalTo: controlsView.heightAnchor),
+            playView.widthAnchor.constraint(equalTo: controlsView.heightAnchor, multiplier: 1),
+            playView.leadingAnchor.constraint(equalTo: controlsView.leadingAnchor, constant: 10),
+
+            pauseView.heightAnchor.constraint(equalTo: controlsView.heightAnchor),
+            pauseView.widthAnchor.constraint(equalTo: controlsView.heightAnchor, multiplier: 1),
+            pauseView.leadingAnchor.constraint(equalTo: playView.trailingAnchor, constant: 10)
+        ])
+        
+        playView.addTarget(self, action: #selector(self.Play(sender:)), for: .touchUpInside)
+        pauseView.addTarget(self, action: #selector(self.Pause(sender:)), for: .touchUpInside)
+    }
+    
+    @objc func playTapped() {
+        print("Play")
+    }
+    
     // BEGIN-CODE-UOC-8
-    func Play(sender:UIButton)
+    @objc func Play(sender:UIButton)
     {
-      
-      
+      print("Play")
     }
 
     
-    func Pause(sender:UIButton)
+    @objc func Pause(sender:UIButton)
     {
-    
+        print("Pause")
     }
     // END-CODE-UOC-8
     
