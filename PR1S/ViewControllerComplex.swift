@@ -45,7 +45,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         self.m_locationManager = CLLocationManager()
         self.m_locationManager?.delegate = self
         self.m_locationManager?.allowsBackgroundLocationUpdates = true
-        self.m_locationManager?.distanceFilter = 50
+        self.m_locationManager?.distanceFilter = 500
 
         // END-CODE-UOC-5
         
@@ -109,18 +109,6 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         pauseView.addTarget(self, action: #selector(self.Pause(sender:)), for: .touchUpInside)
     }
     
-    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-        
-        let span = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-        
-        let location = userLocation.coordinate
-        
-        let region = MKCoordinateRegion(center: location ,span: span)
-        
-        self.m_map?.setRegion(region,animated: true)
-        
-    }
-
     // BEGIN-CODE-UOC-8
     @objc func Play(sender:UIButton)
     {
@@ -133,7 +121,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         print("Pause")
     }
     // END-CODE-UOC-8
-    
+
     func AddMarkers()
     {
     
@@ -172,6 +160,46 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     // BEGIN-CODE-UOC-4
     
+    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+        let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        let location = userLocation.coordinate
+        let region = MKCoordinateRegion(center: location ,span: span)
+        self.m_map?.setRegion(region,animated: true)
+    }
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        if let annotation = annotation as? ComplexMKPointAnnotation {
+            let identifier = "CustomPinAnnotationView"
+            var pinView: MKPinAnnotationView
+            if let dequeuedView = self.m_map?.dequeueReusableAnnotationView(withIdentifier:identifier) as? MKPinAnnotationView {
+                dequeuedView.annotation = annotation
+                pinView = dequeuedView
+            } else {
+                pinView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
+                pinView.canShowCallout = true
+                pinView.calloutOffset = CGPoint(x: -5, y: 5)
+                pinView.rightCalloutAccessoryView = UIButton(type:.detailDisclosure) as UIView
+                pinView.rightCalloutAccessoryView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(playVideo(_:))))
+            }
+            return pinView
+        }
+        return nil
+    }
+    
+    @objc func playVideo(_ gestureRecognizer: UITapGestureRecognizer? = nil) {
+        print("Info clicked")
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        let annotation:ComplexMKPointAnnotation = annotationView.annotation as! ComplexMKPointAnnotation
+        
+        guard let current_loc = self.m_locationManager?.location else {return}
+        let obj_loc:CLLocation = CLLocation(latitude: annotation.coordinate.latitude,longitude: annotation.coordinate.longitude)
+        let distance:CLLocationDistance = (current_loc.distance(from: obj_loc))
+        
+        annotation.subtitle = "\(distance)"
+    }
+
     // END-CODE-UOC-4
     
 
