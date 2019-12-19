@@ -61,8 +61,22 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         
         // BEGIN-CODE-UOC-6
         
+        player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: .new, context: nil)
+        
         // END-CODE-UOC-6
         
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if (keyPath == "") {
+            self.playVideo()
+        }
+    }
+    
+    func startLocation(_ m_locationManager: CLLocationManager?)
+    {
+        self.m_locationManager?.startUpdatingLocation()
+        self.m_map?.showsUserLocation = true
     }
     
     func initViews() {

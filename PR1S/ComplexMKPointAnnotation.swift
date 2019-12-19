@@ -12,7 +12,10 @@ import MapKit
 class ComplexMKPointAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var title: String?
-    var subtitle: String?
+    var subtitle: String? {
+        willSet{willChangeValue(forKey: "subtitle")}
+        didSet{didChangeValue(forKey: "subtitle")}
+    }
     var movie: String?
     
     init(coordinate: CLLocationCoordinate2D, title: String, subtitle: String, movie:String) {
