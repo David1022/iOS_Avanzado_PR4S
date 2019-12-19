@@ -46,7 +46,16 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         self.m_locationManager?.delegate = self
         self.m_locationManager?.allowsBackgroundLocationUpdates = true
         self.m_locationManager?.distanceFilter = 500
-
+        self.m_locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+        
+        let status:CLAuthorizationStatus = CLLocationManager.authorizationStatus()
+        if (status == CLAuthorizationStatus.notDetermined){
+            self.m_locationManager?.requestWhenInUseAuthorization()
+        }
+        else{
+            self.startLocation(self.m_locationManager)
+        }
+        
         // END-CODE-UOC-5
         
         
@@ -143,10 +152,6 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
             print(error)
         }
 
-//        let  annotation:ComplexMKPointAnnotation = ComplexMKPointAnnotation(coordinate: CLLocationCoordinate2D(latitude: 41.4196222,longitude: 2.1844287),title: "Custom title text",subtitle: "Custom subtitle text",movie: "0001")
-        
-//        self.m_map?.addAnnotation(annotation)
-
     // END-CODE-UOC-3
     
     }
@@ -161,7 +166,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     // BEGIN-CODE-UOC-4
     
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-        let span = MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         let location = userLocation.coordinate
         let region = MKCoordinateRegion(center: location ,span: span)
         self.m_map?.setRegion(region,animated: true)
