@@ -61,14 +61,14 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         
         // BEGIN-CODE-UOC-6
         
-        player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: .new, context: nil)
-        
+        self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
+
         // END-CODE-UOC-6
         
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if (keyPath == "") {
+        if (self.player?.status == AVPlayer.Status.readyToPlay) {
             self.playVideo()
         }
     }
