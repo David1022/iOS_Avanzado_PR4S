@@ -189,6 +189,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let annotation = annotation as? ComplexMKPointAnnotation {
+            annotation.subtitle = "distance: \(getDistance(annotation) ?? 0)"
             let identifier = "CustomPinAnnotationView"
             var pinView: MKPinAnnotationView
             if let dequeuedView = self.m_map?.dequeueReusableAnnotationView(withIdentifier:identifier) as? MKPinAnnotationView {
@@ -197,13 +198,19 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
             } else {
                 pinView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
                 pinView.canShowCallout = true
-                pinView.calloutOffset = CGPoint(x: -5, y: 5)
                 pinView.rightCalloutAccessoryView = UIButton(type:.detailDisclosure) as UIView
                 pinView.rightCalloutAccessoryView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(playVideo(_:))))
             }
             return pinView
         }
         return nil
+    }
+    
+    func getDistance(_ pinClicked: ComplexMKPointAnnotation) -> CLLocationDistance? {
+        guard let currentLoc = self.m_locationManager?.location else {return nil}
+        let pinLocation:CLLocation = CLLocation(latitude: pinClicked.coordinate.latitude, longitude: pinClicked.coordinate.longitude)
+        
+        return (currentLoc.distance(from: pinLocation))
     }
     
     @objc func playVideo(_ gestureRecognizer: UITapGestureRecognizer? = nil) {
@@ -221,16 +228,6 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         }
     }
     
-    func mapView(_ mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let annotation:ComplexMKPointAnnotation = annotationView.annotation as! ComplexMKPointAnnotation
-        
-        guard let current_loc = self.m_locationManager?.location else {return}
-        let obj_loc:CLLocation = CLLocation(latitude: annotation.coordinate.latitude,longitude: annotation.coordinate.longitude)
-        let distance:CLLocationDistance = (current_loc.distance(from: obj_loc))
-        
-        annotation.subtitle = "\(distance)"
-    }
-
     // END-CODE-UOC-4
     
 
