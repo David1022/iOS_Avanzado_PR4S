@@ -23,6 +23,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     var player:AVPlayer?
     var m_AVPlayerLayer:AVPlayerLayer?
+    var currentUrlVideo:String?
     
     let videoView = UIImageView()
 
@@ -151,8 +152,9 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
                         
             for marker in markersList {
                 guard let dataMarker = marker as? NSMutableDictionary else {return}
-                let  annotation:ComplexMKPointAnnotation = ComplexMKPointAnnotation(coordinate: CLLocationCoordinate2D(latitude: dataMarker["lat"] as? Double ?? 0, longitude: dataMarker["lon"] as? Double ?? 0), title: dataMarker["title"] as? String ?? "",
-                    subtitle: dataMarker["movie"] as? String ?? "",
+                let  annotation:ComplexMKPointAnnotation = ComplexMKPointAnnotation(coordinate: CLLocationCoordinate2D(latitude: dataMarker["lat"] as? Double ?? 0, longitude: dataMarker["lon"] as? Double ?? 0),
+                    title: dataMarker["title"] as? String ?? "",
+                    subtitle: "",
                     movie: dataMarker["movie"] as? String ?? "")
                 
                 self.m_map?.addAnnotation(annotation)
@@ -186,11 +188,17 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         let region = MKCoordinateRegion(center: location ,span: span)
         self.m_map?.setRegion(region,animated: true)
     }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if let annotation = view.annotation as? ComplexMKPointAnnotation {
+            let distance = String(format: "%.2f", getDistance(annotation) ?? 0)
+            annotation.subtitle = "Distance: \(distance)"
+            self.currentUrlVideo = annotation.movie
+        }
+    }
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let annotation = annotation as? ComplexMKPointAnnotation {
-            let distance = String(format: "%.2f", getDistance(annotation) ?? 0)
-            annotation.subtitle = "Distance: \(distance)"
             let identifier = "CustomPinAnnotationView"
             var pinView: MKPinAnnotationView
             if let dequeuedView = self.m_map?.dequeueReusableAnnotationView(withIdentifier:identifier) as? MKPinAnnotationView {
@@ -216,7 +224,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     @objc func playVideo(_ gestureRecognizer: UITapGestureRecognizer? = nil) {
         print("Info clicked")
-        let urlString = "http://einfmlinux1.uoc.edu/devios/media4/v1.mp4"
+        guard let urlString = self.currentUrlVideo else { return }
         let url = URL(string: urlString)
         if let url = url {
             self.player?.replaceCurrentItem(with: AVPlayerItem(url: url))
