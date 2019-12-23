@@ -189,7 +189,8 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
 
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if let annotation = annotation as? ComplexMKPointAnnotation {
-            annotation.subtitle = "distance: \(getDistance(annotation) ?? 0)"
+            let distance = String(format: "%.2f", getDistance(annotation) ?? 0)
+            annotation.subtitle = "Distance: \(distance)"
             let identifier = "CustomPinAnnotationView"
             var pinView: MKPinAnnotationView
             if let dequeuedView = self.m_map?.dequeueReusableAnnotationView(withIdentifier:identifier) as? MKPinAnnotationView {
