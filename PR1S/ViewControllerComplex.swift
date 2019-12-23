@@ -24,7 +24,8 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     var player:AVPlayer?
     var m_AVPlayerLayer:AVPlayerLayer?
     
-    
+    let videoView = UIImageView()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,19 +61,13 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
         
         
         // BEGIN-CODE-UOC-6
-        
+
         self.player?.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: NSKeyValueObservingOptions(rawValue: 0), context: nil)
 
         // END-CODE-UOC-6
         
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if (self.player?.status == AVPlayer.Status.readyToPlay) {
-            self.playVideo()
-        }
-    }
-    
+        
     func startLocation(_ m_locationManager: CLLocationManager?)
     {
         self.m_locationManager?.startUpdatingLocation()
@@ -80,32 +75,32 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     }
     
     func initViews() {
-        let videoView = UIImageView()
+        self.player = AVPlayer()
         let controlsView = UIView()
         let playView = UIButton(type: .custom)
         let pauseView = UIButton(type: .custom)
 
         self.view.backgroundColor = .black
 
-        videoView.image = #imageLiteral(resourceName: "tv")
         let playImage = UIImage(named: "play.png")
         playView.setImage(playImage, for: .normal)
         let pauseImage = UIImage(named: "pause.png")
         pauseView.setImage(pauseImage, for: .normal)
+        self.videoView.image = #imageLiteral(resourceName: "tv")
 
         guard let map = m_map else {return}
         self.view.addSubview(map)
-        self.view.addSubview(videoView)
+        self.view.addSubview(self.videoView)
         self.view.addSubview(controlsView)
         controlsView.addSubview(playView)
         controlsView.addSubview(pauseView)
 
         map.translatesAutoresizingMaskIntoConstraints = false
-        videoView.translatesAutoresizingMaskIntoConstraints = false
+        self.videoView.translatesAutoresizingMaskIntoConstraints = false
         controlsView.translatesAutoresizingMaskIntoConstraints = false
         playView.translatesAutoresizingMaskIntoConstraints = false
         pauseView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         NSLayoutConstraint.activate([
             map.widthAnchor.constraint(equalTo: self.view.widthAnchor),
             map.topAnchor.constraint(equalTo: self.view.topAnchor),
@@ -115,9 +110,9 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
             controlsView.heightAnchor.constraint(equalToConstant: 80),
             controlsView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             
-            videoView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
-            videoView.topAnchor.constraint(equalTo: self.view.centerYAnchor),
-            videoView.bottomAnchor.constraint(equalTo: controlsView.topAnchor),
+            self.videoView.widthAnchor.constraint(equalTo: self.view.widthAnchor),
+            self.videoView.topAnchor.constraint(equalTo: self.view.centerYAnchor),
+            self.videoView.bottomAnchor.constraint(equalTo: controlsView.topAnchor),
             
             playView.heightAnchor.constraint(equalTo: controlsView.heightAnchor),
             playView.widthAnchor.constraint(equalTo: controlsView.heightAnchor, multiplier: 1),
@@ -135,13 +130,13 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     // BEGIN-CODE-UOC-8
     @objc func Play(sender:UIButton)
     {
-      print("Play")
+        self.player?.play()
     }
 
     
     @objc func Pause(sender:UIButton)
     {
-        print("Pause")
+        self.player?.pause()
     }
     // END-CODE-UOC-8
 
@@ -172,6 +167,12 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     // BEGIN-CODE-UOC-7
     
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if (self.player?.status == AVPlayer.Status.readyToPlay) {
+            self.player?.play()
+        }
+    }
+
     // END-CODE-UOC-7
     
     
@@ -207,6 +208,17 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
     
     @objc func playVideo(_ gestureRecognizer: UITapGestureRecognizer? = nil) {
         print("Info clicked")
+        let urlString = "http://einfmlinux1.uoc.edu/devios/media4/v1.mp4"
+        let url = URL(string: urlString)
+        if let url = url {
+            self.player?.replaceCurrentItem(with: AVPlayerItem(url: url))
+            self.m_AVPlayerLayer = AVPlayerLayer(player: self.player)
+            self.m_AVPlayerLayer?.frame = self.videoView.bounds
+            self.m_AVPlayerLayer?.videoGravity = .resizeAspectFill
+            self.videoView.layer.addSublayer(self.m_AVPlayerLayer!)
+
+            self.player?.play()
+        }
     }
     
     func mapView(_ mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
