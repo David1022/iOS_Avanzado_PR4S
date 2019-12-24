@@ -123,7 +123,7 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
             pauseView.widthAnchor.constraint(equalTo: controlsView.heightAnchor, multiplier: 1),
             pauseView.leadingAnchor.constraint(equalTo: playView.trailingAnchor, constant: 10)
         ])
-        
+                
         playView.addTarget(self, action: #selector(self.Play(sender:)), for: .touchUpInside)
         pauseView.addTarget(self, action: #selector(self.Pause(sender:)), for: .touchUpInside)
     }
@@ -231,7 +231,14 @@ class ViewControllerComplex: UIViewController,MKMapViewDelegate,CLLocationManage
             self.m_AVPlayerLayer = AVPlayerLayer(player: self.player)
             self.m_AVPlayerLayer?.frame = self.videoView.bounds
             self.m_AVPlayerLayer?.videoGravity = .resizeAspectFill
+
+            let myLayer = CALayer()
+            let myImage = UIImage(named: "tv.png")?.cgImage
+            myLayer.frame = self.videoView.bounds
+            myLayer.contents = myImage
+
             self.videoView.layer.addSublayer(self.m_AVPlayerLayer!)
+            self.videoView.layer.addSublayer(myLayer)
 
             self.player?.play()
         }
